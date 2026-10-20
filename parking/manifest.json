@@ -1,0 +1,14 @@
+{
+  "name": "Parking POS",
+  "short_name": "Parking",
+  "description": "Parking tickets, Bluetooth receipts and sales for the parking lot.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0b1f3a",
+  "theme_color": "#0b1f3a",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

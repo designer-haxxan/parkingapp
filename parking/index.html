@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b1f3a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Parking POS</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="logo">P</div>
+    <div>
+      <div class="brand-name" id="brand-name">Parking</div>
+      <div class="brand-sub ur">پارکنگ</div>
+    </div>
+  </div>
+  <div class="inside-chip" id="inside-chip"><span class="pulse"></span><b id="inside-count">0</b> <span>inside</span></div>
+</header>
+
+<main>
+
+  <!-- PARK: pick a vehicle, then save & print the entry receipt -->
+  <section class="view active" id="view-park">
+    <div class="step active" id="step-category">
+      <h1 class="title">Select vehicle <span class="ur">گاڑی منتخب کریں</span></h1>
+      <div class="cat-grid" id="cat-grid"></div>
+    </div>
+
+    <div class="step" id="step-details">
+      <button class="back" id="btn-back">← Back <span class="ur">واپس</span></button>
+      <div class="hero" id="hero"></div>
+
+      <label class="field-label">Vehicle number <span class="ur">گاڑی نمبر</span></label>
+      <input id="plate-input" class="plate-input" maxlength="12" placeholder="LEA-1234" autocomplete="off" autocapitalize="characters" spellcheck="false">
+      <div class="keypad" id="keypad"></div>
+
+      <label class="field-label">Fee (Rs) <span class="ur">فیس</span></label>
+      <div class="fee-row">
+        <button class="round" data-fee="-10" aria-label="Less">−</button>
+        <input id="fee-input" type="number" inputmode="numeric" min="0">
+        <button class="round" data-fee="10" aria-label="More">+</button>
+      </div>
+      <p class="hint">No number? Leave it empty and just save.</p>
+
+      <button class="btn primary big" id="btn-save">🖨️ Save & Print <span class="ur">محفوظ کریں اور پرنٹ کریں</span></button>
+    </div>
+  </section>
+
+  <!-- EXIT: verify a receipt or find a vehicle inside, then release it -->
+  <section class="view" id="view-exit">
+    <h1 class="title">Vehicle exit <span class="ur">گاڑی کی واپسی</span></h1>
+    <label class="search">
+      <span aria-hidden="true">🔎</span>
+      <input id="search" placeholder="Ticket no. or vehicle number" autocomplete="off" inputmode="search">
+    </label>
+    <div class="list-head" id="list-title">Inside now</div>
+    <div class="card-list" id="exit-list"></div>
+  </section>
+
+  <!-- SALES: income, categories and history -->
+  <section class="view" id="view-sales">
+    <h1 class="title">Sales <span class="ur">فروخت</span></h1>
+    <div class="chips" id="range-chips"></div>
+    <div class="kpis" id="kpis"></div>
+
+    <div class="panel">
+      <div class="panel-title">Last 7 days <span class="ur">پچھلے 7 دن</span></div>
+      <div class="chart" id="chart"></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Vehicle categories <span class="ur">گاڑیوں کی اقسام</span></div>
+      <div id="cat-stats"></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Recent entries <span class="ur">حالیہ اندراجات</span></div>
+      <div class="card-list" id="recent"></div>
+    </div>
+
+    <button class="btn ghost full" id="btn-export">⬇️ Export CSV (Excel)</button>
+  </section>
+
+  <!-- SETTINGS: lot details, rates, printer, data -->
+  <section class="view" id="view-settings">
+    <h1 class="title">Settings <span class="ur">ترتیبات</span></h1>
+
+    <div class="panel">
+      <div class="panel-title">Parking details</div>
+      <label class="field-label">Parking name <span class="hint-inline">(English letters print best)</span></label>
+      <input class="text-input" id="set-lot" maxlength="32">
+      <label class="field-label">Address / phone</label>
+      <input class="text-input" id="set-address" maxlength="60">
+      <label class="field-label">Receipt footer</label>
+      <input class="text-input" id="set-footer" maxlength="60">
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Rates per vehicle (Rs) <span class="ur">فیس</span></div>
+      <div id="rates"></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Printer <span class="ur">پرنٹر</span></div>
+      <p class="hint" id="printer-status"></p>
+      <div class="grid2">
+        <button class="btn primary" id="btn-connect">🔗 Connect Bluetooth</button>
+        <button class="btn ghost" id="btn-test">🧾 Test print</button>
+      </div>
+      <label class="field-label">Print method</label>
+      <select class="text-input" id="set-method">
+        <option value="bluetooth">Bluetooth printer (Chrome)</option>
+        <option value="rawbt">RawBT app (Android)</option>
+        <option value="browser">Phone print dialog</option>
+      </select>
+      <label class="field-label">Paper width</label>
+      <select class="text-input" id="set-paper">
+        <option value="58">58 mm (small)</option>
+        <option value="80">80 mm (wide)</option>
+      </select>
+      <label class="check"><input type="checkbox" id="set-autoprint"> Print receipt automatically on save and exit</label>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Data</div>
+      <button class="btn ghost full" id="btn-backup">💾 Download backup (JSON)</button>
+      <button class="btn danger full" id="btn-erase">🗑️ Erase all data</button>
+    </div>
+  </section>
+</main>
+
+<nav class="tabbar">
+  <button class="tab active" data-tab="park"><span class="ti">🅿️</span><span>Park</span><small class="ur">پارک</small></button>
+  <button class="tab" data-tab="exit"><span class="ti">🚪</span><span>Exit</span><small class="ur">نکاسی</small></button>
+  <button class="tab" data-tab="sales"><span class="ti">📊</span><span>Sales</span><small class="ur">فروخت</small></button>
+  <button class="tab" data-tab="settings"><span class="ti">⚙️</span><span>Settings</span><small class="ur">ترتیبات</small></button>
+</nav>
+
+<div class="sheet-backdrop" id="sheet"><div class="sheet" id="sheet-body"></div></div>
+<div class="toasts" id="toasts"></div>
+<div class="print-area" id="print-area"></div>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
