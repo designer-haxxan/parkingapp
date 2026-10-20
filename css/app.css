@@ -69,6 +69,23 @@ button { cursor: pointer; }
   animation: ping 1.8s infinite;
 }
 
+/* ---------- Sign in ---------- */
+body.locked { padding-bottom: 0; background: linear-gradient(160deg, var(--navy), var(--navy-2) 60%, #1e4d7a); min-height: 100vh; }
+body.locked .app-only { display: none !important; }
+body:not(.locked) .login { display: none; }
+.login { min-height: 100vh; display: grid; place-items: center; padding: 20px 16px; animation: viewIn 0.4s ease both; }
+.login-card {
+  width: 100%; max-width: 420px; background: #fff; border-radius: 26px; padding: 26px 22px 22px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35); animation: pop 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.1) both;
+}
+.login-card .logo.big { width: 72px; height: 72px; font-size: 42px; margin: 0 auto 8px; border-radius: 20px; animation: bob 3s ease-in-out infinite; }
+.login-title { text-align: center; font-size: 24px; font-weight: 900; margin: 6px 0 2px; }
+.login-card > .muted { text-align: center; margin: 0 0 4px; }
+.login-card .btn.big { margin-top: 20px; }
+.login-error { color: var(--red); font-weight: 700; min-height: 22px; margin: 12px 0 0; text-align: center; }
+.login-error:empty { min-height: 0; margin: 0; }
+.login-card .btn:disabled { opacity: 0.6; }
+
 /* ---------- Layout ---------- */
 main { max-width: 640px; margin: 0 auto; padding: 16px; }
 .view { display: none; }

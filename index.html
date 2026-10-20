@@ -10,9 +10,25 @@
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="css/app.css">
 </head>
-<body>
+<body class="locked">
 
-<header class="topbar">
+<!-- SIGN IN: shown until the eposwala login succeeds -->
+<section class="login" id="view-login">
+  <div class="login-card">
+    <div class="logo big">P</div>
+    <h1 class="login-title">Parking POS</h1>
+    <p class="muted">Sign in with your eposwala account <span class="ur">اکاؤنٹ میں لاگ ان کریں</span></p>
+    <label class="field-label" for="login-username">Username <span class="ur">یوزر نیم</span></label>
+    <input class="text-input" id="login-username" autocomplete="username" autocapitalize="none" spellcheck="false">
+    <label class="field-label" for="login-password">Password <span class="ur">پاس ورڈ</span></label>
+    <input class="text-input" id="login-password" type="password" autocomplete="current-password">
+    <p class="login-error" id="login-error" role="alert"></p>
+    <button class="btn primary big" id="btn-login">🔐 Sign in <span class="ur">لاگ ان</span></button>
+    <p class="hint">Internet is needed to sign in. After that the app works offline.</p>
+  </div>
+</section>
+
+<header class="topbar app-only">
   <div class="brand">
     <div class="logo">P</div>
     <div>
@@ -23,7 +39,7 @@
   <div class="inside-chip" id="inside-chip"><span class="pulse"></span><b id="inside-count">0</b> <span>inside</span></div>
 </header>
 
-<main>
+<main class="app-only">
 
   <!-- PARK: pick a vehicle, then save & print the entry receipt -->
   <section class="view active" id="view-park">
@@ -92,6 +108,12 @@
     <h1 class="title">Settings <span class="ur">ترتیبات</span></h1>
 
     <div class="panel">
+      <div class="panel-title">Account <span class="ur">اکاؤنٹ</span></div>
+      <p class="hint">Signed in as <b id="account-name">-</b></p>
+      <button class="btn ghost full" id="btn-signout">🚪 Sign out</button>
+    </div>
+
+    <div class="panel">
       <div class="panel-title">Parking details</div>
       <label class="field-label">Parking name <span class="hint-inline">(English letters print best)</span></label>
       <input class="text-input" id="set-lot" maxlength="32">
@@ -135,7 +157,7 @@
   </section>
 </main>
 
-<nav class="tabbar">
+<nav class="tabbar app-only">
   <button class="tab active" data-tab="park"><span class="ti">🅿️</span><span>Park</span><small class="ur">پارک</small></button>
   <button class="tab" data-tab="exit"><span class="ti">🚪</span><span>Exit</span><small class="ur">نکاسی</small></button>
   <button class="tab" data-tab="sales"><span class="ti">📊</span><span>Sales</span><small class="ur">فروخت</small></button>

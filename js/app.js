@@ -1,5 +1,6 @@
 import * as DB from './db.js';
 import * as Printer from './printer.js';
+import * as Auth from './auth.js';
 import { entryOps, exitOps, testOps, toEscPos, toHTML, esc, fmtRs, fmtTime, fmtDate, duration, ticketLabel } from './receipt.js';
 
 // Vehicle categories with default rates (Rs). Rates can be changed in Settings.
@@ -507,6 +508,57 @@ function wireSettings() {
   };
 }
 
+// ---------- Sign in ----------
+function showLogin(message = '') {
+  closeSheet();
+  document.body.classList.add('locked');
+  $('#login-password').value = '';
+  $('#login-error').textContent = message;
+  $('#login-username').focus({ preventScroll: true });
+}
+
+async function enterApp() {
+  document.body.classList.remove('locked');
+  $('#account-name').textContent = Auth.user()?.username || '-';
+  $('#login-error').textContent = '';
+  await reload();
+  showTab(activeTab);
+}
+
+function wireLogin() {
+  const submit = async () => {
+    const btn = $('#btn-login');
+    btn.disabled = true;
+    $('#login-error').textContent = '';
+    try {
+      await Auth.login($('#login-username').value, $('#login-password').value);
+      toast(`Welcome, ${Auth.user().username}`);
+      await enterApp();
+    } catch (e) {
+      $('#login-error').textContent = e.message;
+    } finally {
+      btn.disabled = false;
+    }
+  };
+  $('#btn-login').onclick = submit;
+  $('#login-password').addEventListener('keydown', (e) => { if (e.key === 'Enter') submit(); });
+  $('#login-username').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('#login-password').focus(); });
+
+  $('#btn-signout').onclick = async () => {
+    if (!await ask('Sign out of this phone? Saved tickets stay on this device.', 'Sign out')) return;
+    Auth.logout();
+    showLogin();
+    toast('Signed out');
+  };
+}
+
+// The session runs out after the API's expiresAt. Check it while the app is open and when it returns to the foreground.
+function watchSession() {
+  if (!document.body.classList.contains('locked') && Auth.sessionExpired()) {
+    showLogin('Your session has expired. Connect to the internet and sign in again.');
+  }
+}
+
 // ---------- Boot ----------
 function wireTabs() {
   $$('.tab').forEach((b) => b.addEventListener('click', () => showTab(b.dataset.tab)));
@@ -521,9 +573,15 @@ async function boot() {
   wireExit();
   wireSales();
   wireSettings();
-  await reload();
+  wireLogin();
   setInterval(() => { if (activeTab === 'exit') renderExit(); }, 30000);
+  setInterval(watchSession, 60000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) watchSession(); });
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+
+  const { user, reason } = Auth.restoreSession();
+  if (user) await enterApp();
+  else showLogin(reason || '');
 }
 
 boot();

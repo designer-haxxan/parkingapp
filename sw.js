@@ -1,5 +1,5 @@
 // Offline cache for the parking app. Bump CACHE when any app file changes so phones fetch the new version.
-const CACHE = 'parkpk-v1';
+const CACHE = 'parkpk-v2';
 const SHELL = [
   './',
   'index.html',
@@ -8,6 +8,7 @@ const SHELL = [
   'js/db.js',
   'js/printer.js',
   'js/receipt.js',
+  'js/auth.js',
   'manifest.json',
   'icon.svg',
 ];
